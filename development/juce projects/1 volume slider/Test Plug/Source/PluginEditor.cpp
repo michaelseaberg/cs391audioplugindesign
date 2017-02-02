@@ -62,5 +62,5 @@ void TestPlugAudioProcessorEditor::resized()
 }
 void TestPlugAudioProcessorEditor::sliderValueChanged (Slider* slider)
 {
-    processor.noteOnVel = audioVolume.getValue();
+    //processor.noteOnVel = audioVolume.getValue();
 }
