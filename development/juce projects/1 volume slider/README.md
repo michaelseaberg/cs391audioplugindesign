@@ -1,0 +1,1 @@
+Test Project is simple volume slider implemented using JUCE API, gives simple GUI, no audio function.
