@@ -1,0 +1,3 @@
+## Compressor Design
+
+The MATLAB file CompressorDesign.slx contains the working design for the compressor plug-in. It contains a simulink block diagram which is being used to tweak and correct the algorithm that will be used in the final product. Certain changes must be made in the actual implementation of the proposed design (detailed in the DESIGN.md doc) in order to get the model to function correctly. The file CHANGESLOG.md is used to document all of these changes.
