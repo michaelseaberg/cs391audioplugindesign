@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "192347375D965CF24BD42E05"
+               BlueprintIdentifier = "5C117AD974F87AB57DBE2BAA"
                BuildableName = "libDR Comp Seaberg.a"
                BlueprintName = "DR Comp Seaberg (Shared Code)"
                ReferencedContainer = "container:DR Comp Seaberg.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "192347375D965CF24BD42E05"
+            BlueprintIdentifier = "5C117AD974F87AB57DBE2BAA"
             BuildableName = "libDR Comp Seaberg.a"
             BlueprintName = "DR Comp Seaberg (Shared Code)"
             ReferencedContainer = "container:DR Comp Seaberg.xcodeproj">
@@ -63,7 +63,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "192347375D965CF24BD42E05"
+            BlueprintIdentifier = "5C117AD974F87AB57DBE2BAA"
             BuildableName = "libDR Comp Seaberg.a"
             BlueprintName = "DR Comp Seaberg (Shared Code)"
             ReferencedContainer = "container:DR Comp Seaberg.xcodeproj">

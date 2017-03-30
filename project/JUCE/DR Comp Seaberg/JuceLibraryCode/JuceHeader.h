@@ -10,8 +10,8 @@
 
 */
 
-#ifndef __APPHEADERFILE_G2LH0B__
-#define __APPHEADERFILE_G2LH0B__
+#ifndef __APPHEADERFILE_AIWKOJ__
+#define __APPHEADERFILE_AIWKOJ__
 
 #include "AppConfig.h"
 
@@ -46,4 +46,4 @@ namespace ProjectInfo
 }
 #endif
 
-#endif   // __APPHEADERFILE_G2LH0B__
+#endif   // __APPHEADERFILE_AIWKOJ__

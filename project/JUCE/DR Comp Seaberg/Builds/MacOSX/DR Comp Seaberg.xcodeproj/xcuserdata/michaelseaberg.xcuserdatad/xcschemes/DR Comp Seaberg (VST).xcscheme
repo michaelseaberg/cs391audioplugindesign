@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3DC09E6E5FB65E1CE4783D3C"
+               BlueprintIdentifier = "A6FF5234AFD4D707F650EA1F"
                BuildableName = "DR Comp Seaberg.vst"
                BlueprintName = "DR Comp Seaberg (VST)"
                ReferencedContainer = "container:DR Comp Seaberg.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3DC09E6E5FB65E1CE4783D3C"
+            BlueprintIdentifier = "A6FF5234AFD4D707F650EA1F"
             BuildableName = "DR Comp Seaberg.vst"
             BlueprintName = "DR Comp Seaberg (VST)"
             ReferencedContainer = "container:DR Comp Seaberg.xcodeproj">
@@ -63,7 +63,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "3DC09E6E5FB65E1CE4783D3C"
+            BlueprintIdentifier = "A6FF5234AFD4D707F650EA1F"
             BuildableName = "DR Comp Seaberg.vst"
             BlueprintName = "DR Comp Seaberg (VST)"
             ReferencedContainer = "container:DR Comp Seaberg.xcodeproj">

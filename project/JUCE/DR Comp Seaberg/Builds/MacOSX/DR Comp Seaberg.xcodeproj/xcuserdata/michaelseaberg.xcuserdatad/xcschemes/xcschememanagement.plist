@@ -4,15 +4,10 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>DR Comp Seaberg (AUv3 AppExtension).xcscheme</key>
+		<key>DR Comp Seaberg (AU).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>2</integer>
-		</dict>
-		<key>DR Comp Seaberg (AUv3 Standalone).xcscheme</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>3</integer>
 		</dict>
 		<key>DR Comp Seaberg (All).xcscheme</key>
 		<dict>
@@ -22,7 +17,7 @@
 		<key>DR Comp Seaberg (Shared Code).xcscheme</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>3</integer>
 		</dict>
 		<key>DR Comp Seaberg (VST).xcscheme</key>
 		<dict>
@@ -32,27 +27,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>192347375D965CF24BD42E05</key>
+		<key>0522819D8D0815C04CA24BF9</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>3DC09E6E5FB65E1CE4783D3C</key>
+		<key>5C117AD974F87AB57DBE2BAA</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>69D387D234E5C65A28593EE0</key>
+		<key>A6FF5234AFD4D707F650EA1F</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>8E044CB99595A543B4BB75F6</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>EC5A787537A3DD10A731E068</key>
+		<key>B11AC06E8FFCE46B8BADBF3C</key>
 		<dict>
 			<key>primary</key>
 			<true/>

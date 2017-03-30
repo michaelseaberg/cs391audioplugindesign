@@ -11,8 +11,8 @@
 
 */
 
-#ifndef __JUCE_APPCONFIG_G2LH0B__
-#define __JUCE_APPCONFIG_G2LH0B__
+#ifndef __JUCE_APPCONFIG_AIWKOJ__
+#define __JUCE_APPCONFIG_AIWKOJ__
 
 //==============================================================================
 // [BEGIN_USER_CODE_SECTION]
@@ -230,10 +230,10 @@
  #define JucePlugin_Build_VST3             0
 #endif
 #ifndef  JucePlugin_Build_AU
- #define JucePlugin_Build_AU               0
+ #define JucePlugin_Build_AU               1
 #endif
 #ifndef  JucePlugin_Build_AUv3
- #define JucePlugin_Build_AUv3             1
+ #define JucePlugin_Build_AUv3             0
 #endif
 #ifndef  JucePlugin_Build_RTAS
  #define JucePlugin_Build_RTAS             0
@@ -242,7 +242,7 @@
  #define JucePlugin_Build_AAX              0
 #endif
 #ifndef  JucePlugin_Build_STANDALONE
- #define JucePlugin_Build_STANDALONE       1
+ #define JucePlugin_Build_STANDALONE       0
 #endif
 #ifndef  JucePlugin_Name
  #define JucePlugin_Name                   "DR Comp Seaberg"
@@ -263,7 +263,7 @@
  #define JucePlugin_ManufacturerCode       0x4d616e75 // 'Manu'
 #endif
 #ifndef  JucePlugin_PluginCode
- #define JucePlugin_PluginCode             0x47326c68 // 'G2lh'
+ #define JucePlugin_PluginCode             0x4169776b // 'Aiwk'
 #endif
 #ifndef  JucePlugin_IsSynth
  #define JucePlugin_IsSynth                0
@@ -311,7 +311,7 @@
  #define JucePlugin_AUManufacturerCode     JucePlugin_ManufacturerCode
 #endif
 #ifndef  JucePlugin_CFBundleIdentifier
- #define JucePlugin_CFBundleIdentifier     com.seaberg.DRCompSeaberg
+ #define JucePlugin_CFBundleIdentifier     com.yourcompany.DRCompSeaberg
 #endif
 #ifndef  JucePlugin_RTASCategory
  #define JucePlugin_RTASCategory           ePlugInCategory_None
@@ -329,7 +329,7 @@
  #define JucePlugin_RTASDisableMultiMono   0
 #endif
 #ifndef  JucePlugin_AAXIdentifier
- #define JucePlugin_AAXIdentifier          com.seaberg.DRCompSeaberg
+ #define JucePlugin_AAXIdentifier          com.yourcompany.DRCompSeaberg
 #endif
 #ifndef  JucePlugin_AAXManufacturerCode
  #define JucePlugin_AAXManufacturerCode    JucePlugin_ManufacturerCode
@@ -347,4 +347,4 @@
  #define JucePlugin_AAXDisableMultiMono    0
 #endif
 
-#endif  // __JUCE_APPCONFIG_G2LH0B__
+#endif  // __JUCE_APPCONFIG_AIWKOJ__

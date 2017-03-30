@@ -1,9 +1,9 @@
 /*
   ==============================================================================
-
-    This file was auto-generated!
-
-    It contains the basic framework code for a JUCE plugin processor.
+ Michael Seaberg
+ Dynamic Range Compressor Plugin
+ Duke University-CS391
+ Duvall,Pfister
 
   ==============================================================================
 */
@@ -11,7 +11,7 @@
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
-
+//Constructor + Destructor
 //==============================================================================
 DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -25,70 +25,87 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
                        )
 #endif
 {
+    //all parameters must be allocated and added here
+    addParameter (makeupGain = new AudioParameterFloat ("makeupGain", // parameterID
+                                                  "Makeup Gain", // parameter name
+                                                  0,   // mininum value
+                                                  30,   // maximum value
+                                                  0)); // default value
+    addParameter (threshold = new AudioParameterFloat ("threshold", // parameterID
+                                                      "Threshold", // parameter name
+                                                      -60,   // mininum value
+                                                      0,   // maximum value
+                                                      0)); // default value
+    addParameter (ratio = new AudioParameterFloat ("ratio", // parameterID
+                                                      "Ratio", // parameter name
+                                                      1,   // mininum value
+                                                      20,   // maximum value
+                                                      1)); // default value
+    addParameter (attackTime = new AudioParameterFloat ("attackTime", // parameterID
+                                                      "Attack Time (ms)", // parameter name
+                                                      0,   // mininum value
+                                                      100,   // maximum value
+                                                      0)); // default value
+    addParameter (releaseTime = new AudioParameterFloat ("releaseTime", // parameterID
+                                                      "Release Time (ms)", // parameter name
+                                                      10,   // mininum value
+                                                      1000,   // maximum value
+                                                      10)); // default value
+    
 }
 
 DrCompSeabergAudioProcessor::~DrCompSeabergAudioProcessor()
 {
 }
 
+//Helper Methods
 //==============================================================================
-const String DrCompSeabergAudioProcessor::getName() const
-{
-    return JucePlugin_Name;
+float computeConstant(float time, double sampleRate){
+    return exp(-1/((time*.001)*sampleRate));
 }
 
-bool DrCompSeabergAudioProcessor::acceptsMidi() const
-{
-   #if JucePlugin_WantsMidiInput
-    return true;
-   #else
-    return false;
-   #endif
+void linTodB(float& sample){
+    float temp = fabsf(sample);
+    if(temp < 0.000001)
+        sample = -120;
+    else
+        sample = 20*log10(fabsf(sample));
 }
 
-bool DrCompSeabergAudioProcessor::producesMidi() const
-{
-   #if JucePlugin_ProducesMidiOutput
-    return true;
-   #else
-    return false;
-   #endif
+void dBToLin(float& sample){
+    sample = powf(10,(sample/20));
 }
 
-double DrCompSeabergAudioProcessor::getTailLengthSeconds() const
-{
-    return 0.0;
+//why can I not access threshold or values from inside helper methods-private objects
+float computeGainCorrection(float sample, float thresholdValue, float ratioValue){
+    if(sample <= thresholdValue)
+        return sample;
+    
+    else
+        return thresholdValue+((sample-thresholdValue)/ratioValue);
+    
+    
 }
 
-int DrCompSeabergAudioProcessor::getNumPrograms()
-{
-    return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
-                // so this should be at least 1, even if you're not really implementing programs.
+float computeLevelDetection(float sample, float previousSample, float attackConstant, float releaseConstant){
+    if (sample>previousSample)
+        return (attackConstant*previousSample)+((1-attackConstant)*sample);
+    else
+        return (releaseConstant*previousSample)+((1-releaseConstant)*sample);
+    
 }
-
-int DrCompSeabergAudioProcessor::getCurrentProgram()
-{
-    return 0;
-}
-
-void DrCompSeabergAudioProcessor::setCurrentProgram (int index)
-{
-}
-
-const String DrCompSeabergAudioProcessor::getProgramName (int index)
-{
-    return String();
-}
-
-void DrCompSeabergAudioProcessor::changeProgramName (int index, const String& newName)
-{
-}
-
 //==============================================================================
 void DrCompSeabergAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+    currentSample = 0;
+    previousSample = 0;
+    gainComputerOut = 0;
+    levelDetectorOut = 0;
+    controlSignal = 0;
+    computedSample = 0;
+    attackConstant = 0;
+    releaseConstant = 0;
+    
 }
 
 void DrCompSeabergAudioProcessor::releaseResources()
@@ -125,6 +142,9 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
 {
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
+    
+    attackConstant = computeConstant(attackTime->get(),this->getSampleRate());
+    releaseConstant = computeConstant(releaseTime->get(),this->getSampleRate());
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -140,22 +160,52 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         float* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
+        for(int sample=0; sample < buffer.getNumSamples(); ++sample){
+            currentSample = channelData[sample];
+            
+            //take channelData and treat as "data"-one sample. Increment the pointer when time to process next sample
+            controlSignal = currentSample;
+            //linear to DB conversion
+            linTodB(controlSignal);
+            //gain computing
+            gainComputerOut = computeGainCorrection(controlSignal,threshold->get(),ratio->get());
+            controlSignal = controlSignal-gainComputerOut;
+            //dBToLin(controlSignal);
+            
+            //level detection
+            levelDetectorOut = computeLevelDetection(controlSignal,previousSample,attackConstant,releaseConstant);
+            previousSample = levelDetectorOut;
+            controlSignal = (makeupGain->get())-levelDetectorOut;
+            //db to linear conversion
+            dBToLin(controlSignal);
+            //set sample to equal new sample
+            computedSample = currentSample*controlSignal;
+            channelData[sample] = computedSample;
+            
+        }
+        //detect how many channels there are, for each channel of data,
+        //we must process the current buffer individually
     }
 }
 
+
+//Editor interface
 //==============================================================================
 bool DrCompSeabergAudioProcessor::hasEditor() const
 {
-    return true; // (change this to false if you choose to not supply an editor)
+    return true; //Returns true to tell host that we want to use our editor
 }
 
 AudioProcessorEditor* DrCompSeabergAudioProcessor::createEditor()
 {
-    return new DrCompSeabergAudioProcessorEditor (*this);
+    //uncomment below to use PluginEditor class
+    //return new DrCompSeabergAudioProcessorEditor (*this);
+    
+    //currently using self set up editor interface
+    return new GenericAudioProcessorEditor (this);
 }
 
+//State storage
 //==============================================================================
 void DrCompSeabergAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
