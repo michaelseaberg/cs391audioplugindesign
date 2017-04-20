@@ -26,31 +26,42 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
 #endif
 {
     //all parameters must be allocated and added here
-    addParameter (makeupGain = new AudioParameterFloat ("makeupGain", // parameterID
-                                                  "Makeup Gain", // parameter name
-                                                  0,   // mininum value
-                                                  30,   // maximum value
-                                                  0)); // default value
-    addParameter (threshold = new AudioParameterFloat ("threshold", // parameterID
+    addParameter (inputGain = new AudioParameterFloat ("inG",
+                                                       "Input Gain (dB)",
+                                                       0,
+                                                       10,
+                                                       0));
+    addParameter (threshold = new AudioParameterFloat ("t", // parameterID
                                                       "Threshold", // parameter name
                                                       -60,   // mininum value
                                                       0,   // maximum value
                                                       0)); // default value
-    addParameter (ratio = new AudioParameterFloat ("ratio", // parameterID
+    addParameter (ratio = new AudioParameterFloat ("r", // parameterID
                                                       "Ratio", // parameter name
                                                       1,   // mininum value
                                                       20,   // maximum value
                                                       1)); // default value
-    addParameter (attackTime = new AudioParameterFloat ("attackTime", // parameterID
+    addParameter (attackTime = new AudioParameterFloat ("aT", // parameterID
                                                       "Attack Time (ms)", // parameter name
                                                       0,   // mininum value
                                                       100,   // maximum value
                                                       0)); // default value
-    addParameter (releaseTime = new AudioParameterFloat ("releaseTime", // parameterID
+    addParameter (releaseTime = new AudioParameterFloat ("rT", // parameterID
                                                       "Release Time (ms)", // parameter name
                                                       10,   // mininum value
                                                       1000,   // maximum value
                                                       10)); // default value
+    addParameter (makeupGain = new AudioParameterFloat ("g", // parameterID
+                                                        "Makeup Gain", // parameter name
+                                                        0,   // mininum value
+                                                        30,   // maximum value
+                                                        0)); // default value
+    
+    
+    
+    oversampling = 4;
+    
+    
     
 }
 
@@ -94,9 +105,38 @@ float computeLevelDetection(float sample, float previousSample, float attackCons
         return (releaseConstant*previousSample)+((1-releaseConstant)*sample);
     
 }
+
+
+//Input Gain Stage - Distortion
+//==============================================================================
+float DrCompSeabergAudioProcessor::gainStage(float inputSample){
+    
+    //process through distortion
+    float outputSample;
+    float threshold1 = 1.0f/3.0f;
+    float threshold2 = 2.0f/3.0f;
+    
+        if(inputSample > threshold2)
+            outputSample = 1;
+        else if(inputSample > threshold1)
+            outputSample = (3 - (2 - 3*inputSample) *
+                   (2 - 3*inputSample))/3;
+        else if(inputSample < -threshold2)
+            outputSample = -1;
+        else if(inputSample < -threshold1)
+            outputSample = -(3 - (2 + 3*inputSample) *
+                    (2 + 3*inputSample))/3;
+        else
+            outputSample = 2* inputSample;
+    
+    return outputSample;
+}
+
+
 //==============================================================================
 void DrCompSeabergAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    samplesInBlock = samplesPerBlock;
     currentSample = 0;
     previousSample = 0;
     gainComputerOut = 0;
@@ -105,7 +145,9 @@ void DrCompSeabergAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     computedSample = 0;
     attackConstant = 0;
     releaseConstant = 0;
-    
+    gainStageFilter.setCoefficients(IIRCoefficients::makeLowPass(sampleRate*oversampling, 20000));
+    gainStageFilter.reset();
+    resampledBuffer.setSize (getTotalNumInputChannels(), samplesPerBlock * oversampling);
 }
 
 void DrCompSeabergAudioProcessor::releaseResources()
@@ -140,11 +182,16 @@ bool DrCompSeabergAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 
 void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+    juce::AudioPlayHead::CurrentPositionInfo tempPosition;
+    getPlayHead()->getCurrentPosition(tempPosition);
+    audioPlaying=tempPosition.isPlaying;
+    
     const int totalNumInputChannels  = getTotalNumInputChannels();
     const int totalNumOutputChannels = getTotalNumOutputChannels();
     
     attackConstant = computeConstant(attackTime->get(),this->getSampleRate());
     releaseConstant = computeConstant(releaseTime->get(),this->getSampleRate());
+    inputGainLinear = powf(10.0f, ((inputGain->get())/20.0f));
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -159,7 +206,33 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     // audio processing...
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
+        
+        float* writer1 = resampledBuffer.getWritePointer (channel);
         float* channelData = buffer.getWritePointer (channel);
+        
+        for (int x=0; x<buffer.getNumSamples(); ++x) // note -1 otherwise you go out of bounds...
+        {
+            writer1[x*oversampling] = channelData[x] * inputGainLinear;
+            writer1[x*oversampling+1] = 0;
+            writer1[x*oversampling+2] = 0;
+            writer1[x*oversampling+3] = 0;
+            
+        }
+        gainStageFilter.processSamples(resampledBuffer.getWritePointer(channel), resampledBuffer.getNumSamples());
+        
+        for (int i=0; i<resampledBuffer.getNumSamples(); i++){
+            writer1[i] = gainStage(writer1[i]);
+        }
+        
+        
+        for(int x=0; x<buffer.getNumSamples(); ++x){
+            channelData[x] = writer1[x*oversampling];
+        }
+        
+        
+        
+        //gainStageFilter.processSamples(buffer.getWritePointer(channel), buffer.getNumSamples());
+        currentSamples = buffer.getReadPointer(channel);
         for(int sample=0; sample < buffer.getNumSamples(); ++sample){
             currentSample = channelData[sample];
             
@@ -185,7 +258,12 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
         }
         //detect how many channels there are, for each channel of data,
         //we must process the current buffer individually
+        //currentSamples = *new AudioSampleBuffer(&channelData,totalNumInputChannels,buffer.getNumSamples());
     }
+}
+
+bool DrCompSeabergAudioProcessor::isAudioPlaying(){
+    return audioPlaying;
 }
 
 
@@ -199,10 +277,11 @@ bool DrCompSeabergAudioProcessor::hasEditor() const
 AudioProcessorEditor* DrCompSeabergAudioProcessor::createEditor()
 {
     //uncomment below to use PluginEditor class
-    //return new DrCompSeabergAudioProcessorEditor (*this);
+    return new DrCompSeabergAudioProcessorEditor(*this);
+
     
     //currently using self set up editor interface
-    return new GenericAudioProcessorEditor (this);
+    //return new GenericAudioProcessorEditor (this);
 }
 
 //State storage

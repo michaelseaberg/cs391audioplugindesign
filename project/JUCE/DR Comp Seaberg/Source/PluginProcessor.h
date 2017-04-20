@@ -56,8 +56,15 @@ public:
     //==============================================================================
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
+    
+    //==============================================================================
+    const float* currentSamples;
+    bool isAudioPlaying();
+    int samplesInBlock;
+    
 
 private:
+    float gainStage(float inputSample);
     //==============================================================================
     //declare all parameters here
     AudioParameterFloat* makeupGain;
@@ -65,6 +72,7 @@ private:
     AudioParameterFloat* attackTime;
     AudioParameterFloat* releaseTime;
     AudioParameterFloat* ratio;
+    AudioParameterFloat* inputGain;
     float currentSample;
     float previousSample;
     float gainComputerOut;
@@ -73,6 +81,14 @@ private:
     float computedSample;
     float attackConstant;
     float releaseConstant;
+    float inputGainLinear;
+    
+    bool audioPlaying;
+    
+    int oversampling;
+    AudioSampleBuffer resampledBuffer;
+    IIRFilter gainStageFilter;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrCompSeabergAudioProcessor)
 };
 
