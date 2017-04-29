@@ -3,7 +3,7 @@ _____________________________
 ### Michael Seaberg
 #### Advisors: Robert Duvall and Dr. Henry Pfister
 
--Write Breif synopsis of project here-
+This Repo follows the design and implementation of a dynamic range compressor plug-in (AU and VST formats)
 
 This project is organized into two sections: 
 

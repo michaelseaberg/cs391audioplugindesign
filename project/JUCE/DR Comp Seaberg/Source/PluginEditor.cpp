@@ -64,7 +64,7 @@ void DrCompSeabergAudioProcessorEditor::resized()
 
 
 void DrCompSeabergAudioProcessorEditor::createWaveform(){
-    myWaveform->setBounds(30, 30, 450, 150);
+    myWaveform->setBounds(30, 30, 540, 150);
     //myWaveform->setRepaintRate(40);
     myWaveform->setColours(Colour(200,200,200), Colour(0, 0, 255));
     addAndMakeVisible(myWaveform);

@@ -29,7 +29,7 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
     addParameter (inputGain = new AudioParameterFloat ("inG",
                                                        "Input Gain (dB)",
                                                        0,
-                                                       10,
+                                                       15,
                                                        0));
     addParameter (threshold = new AudioParameterFloat ("t", // parameterID
                                                       "Threshold", // parameter name
