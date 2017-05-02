@@ -8,8 +8,9 @@
   ==============================================================================
 */
 
-#include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "PluginProcessor.h"
+#include "CompressorDisplay.h"
 
 
 //==============================================================================
@@ -18,9 +19,10 @@ DrCompSeabergAudioProcessorEditor::DrCompSeabergAudioProcessorEditor (DrCompSeab
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
+    
     setSize (510, 340);
     
-    myWaveform = new AudioVisualiserComponent(1);
+    myCompressorDisplay = new CompressorDisplay(p,*this);
     const OwnedArray<AudioProcessorParameter>& params = processor.getParameters();
     
     for (int i = 0; i < params.size(); ++i)
@@ -31,8 +33,6 @@ DrCompSeabergAudioProcessorEditor::DrCompSeabergAudioProcessorEditor (DrCompSeab
             
         }
     }
-    startTimer (20);
-    createWaveform();
     
 }
 
@@ -47,8 +47,6 @@ void DrCompSeabergAudioProcessorEditor::paint (Graphics& g)
     g.setColour (Colours::black);
     g.setFont (18.0f);
     g.drawFittedText ("Compressor",0,0, getWidth(),30, Justification::centred, 1);
-    if(processor.isAudioPlaying())
-        myWaveform->pushBuffer(&processor.currentSamples, processor.getTotalNumInputChannels(), processor.samplesInBlock);
     
 }
 
@@ -59,16 +57,6 @@ void DrCompSeabergAudioProcessorEditor::resized()
 //    for(int i=0;i < parameterSliders.size();i++){
 //        parameterSliders[i]->setBounds(30+(i*90), 200, 90, 80);
 //    }
-}
-
-
-
-void DrCompSeabergAudioProcessorEditor::createWaveform(){
-    myWaveform->setBounds(30, 30, 450, 150);
-    //myWaveform->setRepaintRate(40);
-    myWaveform->setColours(Colour(200,200,200), Colour(0, 0, 255));
-    addAndMakeVisible(myWaveform);
-    
 }
 
 void DrCompSeabergAudioProcessorEditor::createControl(const AudioProcessorParameterWithID* parameter, int parameterNumber){
@@ -86,13 +74,6 @@ void DrCompSeabergAudioProcessorEditor::createControl(const AudioProcessorParame
             newButton->setBounds(30+(i*112.5), 281, 112.5, 40);
             addAndMakeVisible(newButton);
         }
-        
-        
-        //newSlider->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
-        //newSlider->setRange (floatParam->range.start, floatParam->range.end,1);
-        //TODO: Create new Slider Label that gives Parameter: Value Unit
-        //newSlider->setTextBoxStyle(Slider::TextBoxBelow, true, 90,25);
-        //newSlider->setTextValueSuffix(" :"+ floatParam->name);
         
     }
     else{
@@ -150,10 +131,3 @@ AudioParameterFloat* DrCompSeabergAudioProcessorEditor::getParameterForSlider (S
     const OwnedArray<AudioProcessorParameter>& params = getAudioProcessor()->getParameters();
     return dynamic_cast<AudioParameterFloat*> (params[parameterSliders.indexOf (slider)]);
 }
-
-void DrCompSeabergAudioProcessorEditor::timerCallback()
-{
-    if(processor.isAudioPlaying() && !processor.isProcessorBypassed())
-        repaint();
-}
-

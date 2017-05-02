@@ -7,7 +7,6 @@
 
   ==============================================================================
 */
-
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
 
@@ -30,7 +29,7 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
     addParameter (inputGain = new AudioParameterFloat ("inG",
                                                        "Input Gain (dB)",
                                                        0,
-                                                       15,
+                                                       30,
                                                        0));
     addParameter (threshold = new AudioParameterFloat ("t", // parameterID
                                                       "Threshold", // parameter name
@@ -49,7 +48,7 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
                                                       10)); // default value
     addParameter (makeupGain = new AudioParameterFloat ("g", // parameterID
                                                         "Makeup Gain", // parameter name
-                                                        0,   // mininum value
+                                                        -10,   // mininum value
                                                         30,   // maximum value
                                                         0)); // default value
     addParameter (ratio = new AudioParameterChoice("r",
@@ -110,17 +109,17 @@ float DrCompSeabergAudioProcessor::gainStage(float inputSample){
     float threshold2 = 2.0f/3.0f;
     
         if(inputSample > threshold2)
-            outputSample = 1;
+            outputSample = 1.0f;
         else if(inputSample > threshold1)
-            outputSample = (3 - (2 - 3*inputSample) *
-                   (2 - 3*inputSample))/3;
+            outputSample = (3.0f - (2.0f - 3.0f*inputSample) *
+                   (2.0f - 3.0f*inputSample))/3.0f;
         else if(inputSample < -threshold2)
-            outputSample = -1;
+            outputSample = -1.0f;
         else if(inputSample < -threshold1)
-            outputSample = -(3 - (2 + 3*inputSample) *
-                    (2 + 3*inputSample))/3;
+            outputSample = -(3.0f - (2.0f + 3.0f*inputSample) *
+                    (2.0f + 3.0f*inputSample))/3.0f;
         else
-            outputSample = 2* inputSample;
+            outputSample = 2.0f* inputSample;
     
     return outputSample;
 }
@@ -229,14 +228,13 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
             writer1[i] = gainStage(writer1[i]);
         }
         
-        
         for(int x=0; x<buffer.getNumSamples(); ++x){
             channelData[x] = writer1[x*oversampling];
         }
         
         
         
-        //gainStageFilter.processSamples(buffer.getWritePointer(channel), buffer.getNumSamples());
+        
         currentSamples = buffer.getReadPointer(channel);
         for(int sample=0; sample < buffer.getNumSamples(); ++sample){
             currentSample = channelData[sample];

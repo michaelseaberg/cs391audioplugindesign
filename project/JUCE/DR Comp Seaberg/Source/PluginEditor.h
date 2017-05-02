@@ -20,8 +20,7 @@
 */
 class DrCompSeabergAudioProcessorEditor  : public AudioProcessorEditor,
                                             private Slider::Listener,
-                                            private Button::Listener,
-                                            private Timer
+                                            private Button::Listener
 {
 public:
     DrCompSeabergAudioProcessorEditor (DrCompSeabergAudioProcessor&);
@@ -32,7 +31,6 @@ public:
     void resized() override;
 
 private:
-    void timerCallback() override;
     void sliderValueChanged (Slider* slider) override;
     void sliderDragStarted (Slider* slider) override;
     void sliderDragEnded (Slider* slider) override;
@@ -46,7 +44,7 @@ private:
     void createControl(const AudioProcessorParameterWithID* parameter, int parameterNumber);
     void createWaveform();
     
-    AudioVisualiserComponent* myWaveform;
+    Component* myCompressorDisplay;
     OwnedArray<Slider> parameterSliders;
     OwnedArray<Button> ratioButtons;
     

@@ -12,6 +12,14 @@
               jucerVersion="4.3.0">
   <MAINGROUP id="LjKMmM" name="DR Comp Seaberg">
     <GROUP id="{10EAB11C-25A4-8F50-8839-EF862551DD72}" name="Source">
+      <FILE id="iF8iES" name="CompressorDisplay.cpp" compile="1" resource="0"
+            file="Source/CompressorDisplay.cpp"/>
+      <FILE id="scpkGE" name="CompressorDisplay.h" compile="0" resource="0"
+            file="Source/CompressorDisplay.h"/>
+      <FILE id="f5xdlR" name="WaveformVisualizer.cpp" compile="1" resource="0"
+            file="Source/WaveformVisualizer.cpp"/>
+      <FILE id="fqxYp3" name="WaveformVisualizer.h" compile="0" resource="0"
+            file="Source/WaveformVisualizer.h"/>
       <FILE id="ZDF2u6" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="C0gaM4" name="PluginProcessor.h" compile="0" resource="0"
