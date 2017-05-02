@@ -35,6 +35,7 @@ public:
    #endif
 
     void processBlock (AudioSampleBuffer&, MidiBuffer&) override;
+    void processBlockBypassed (AudioSampleBuffer&, MidiBuffer&) override;
 
     //==============================================================================
     AudioProcessorEditor* createEditor() override;
@@ -60,7 +61,8 @@ public:
     //==============================================================================
     const float* currentSamples;
     bool isAudioPlaying();
-    int samplesInBlock;
+    bool isProcessorBypassed();
+    int samplesInBlock; //refactor
     
 
 private:
@@ -71,7 +73,7 @@ private:
     AudioParameterFloat* threshold;
     AudioParameterFloat* attackTime;
     AudioParameterFloat* releaseTime;
-    AudioParameterFloat* ratio;
+    AudioParameterChoice* ratio;
     AudioParameterFloat* inputGain;
     float currentSample;
     float previousSample;
@@ -82,10 +84,12 @@ private:
     float attackConstant;
     float releaseConstant;
     float inputGainLinear;
+    const String ratios[4] = {String("2"),String("4"),String("6"),String("8")};
     
+    bool processorBypassed;
     bool audioPlaying;
     
-    int oversampling;
+    const int oversampling = 4;
     AudioSampleBuffer resampledBuffer;
     IIRFilter gainStageFilter;
     

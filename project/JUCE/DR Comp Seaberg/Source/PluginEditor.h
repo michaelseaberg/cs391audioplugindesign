@@ -20,7 +20,8 @@
 */
 class DrCompSeabergAudioProcessorEditor  : public AudioProcessorEditor,
                                             private Slider::Listener,
-                                            private Timer  
+                                            private Button::Listener,
+                                            private Timer
 {
 public:
     DrCompSeabergAudioProcessorEditor (DrCompSeabergAudioProcessor&);
@@ -35,16 +36,19 @@ private:
     void sliderValueChanged (Slider* slider) override;
     void sliderDragStarted (Slider* slider) override;
     void sliderDragEnded (Slider* slider) override;
+    void buttonClicked (Button* button) override;
+    void buttonStateChanged (Button* button) override;
     AudioParameterFloat* getParameterForSlider(Slider* slider);
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     DrCompSeabergAudioProcessor& processor;
     
-    void createSlider(const AudioParameterFloat* parameter, int parameterNumber);
+    void createControl(const AudioProcessorParameterWithID* parameter, int parameterNumber);
     void createWaveform();
     
     AudioVisualiserComponent* myWaveform;
     OwnedArray<Slider> parameterSliders;
+    OwnedArray<Button> ratioButtons;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrCompSeabergAudioProcessorEditor)
 };

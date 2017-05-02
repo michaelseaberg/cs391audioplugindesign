@@ -25,6 +25,7 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
                        )
 #endif
 {
+    StringArray ratioTextArray = StringArray(&ratios[0],4);
     //all parameters must be allocated and added here
     addParameter (inputGain = new AudioParameterFloat ("inG",
                                                        "Input Gain (dB)",
@@ -36,11 +37,6 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
                                                       -60,   // mininum value
                                                       0,   // maximum value
                                                       0)); // default value
-    addParameter (ratio = new AudioParameterFloat ("r", // parameterID
-                                                      "Ratio", // parameter name
-                                                      1,   // mininum value
-                                                      20,   // maximum value
-                                                      1)); // default value
     addParameter (attackTime = new AudioParameterFloat ("aT", // parameterID
                                                       "Attack Time (ms)", // parameter name
                                                       0,   // mininum value
@@ -56,13 +52,10 @@ DrCompSeabergAudioProcessor::DrCompSeabergAudioProcessor()
                                                         0,   // mininum value
                                                         30,   // maximum value
                                                         0)); // default value
-    
-    
-    
-    oversampling = 4;
-    
-    
-    
+    addParameter (ratio = new AudioParameterChoice("r",
+                                                   "Ratio",
+                                                   ratioTextArray,
+                                                   0));
 }
 
 DrCompSeabergAudioProcessor::~DrCompSeabergAudioProcessor()
@@ -180,8 +173,20 @@ bool DrCompSeabergAudioProcessor::isBusesLayoutSupported (const BusesLayout& lay
 }
 #endif
 
+void DrCompSeabergAudioProcessor::processBlockBypassed (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
+{
+    processorBypassed = true;
+    for (int ch = getMainBusNumInputChannels(); ch < getTotalNumOutputChannels(); ++ch)
+        buffer.clear (ch, 0, buffer.getNumSamples());
+}
+
 void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiBuffer& midiMessages)
 {
+    if(buffer.hasBeenCleared())
+        processorBypassed = true;
+    else
+        processorBypassed = false;
+    
     juce::AudioPlayHead::CurrentPositionInfo tempPosition;
     getPlayHead()->getCurrentPosition(tempPosition);
     audioPlaying=tempPosition.isPlaying;
@@ -241,7 +246,7 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
             //linear to DB conversion
             linTodB(controlSignal);
             //gain computing
-            gainComputerOut = computeGainCorrection(controlSignal,threshold->get(),ratio->get());
+            gainComputerOut = computeGainCorrection(controlSignal,threshold->get(),(ratio->getCurrentChoiceName()).getFloatValue());
             controlSignal = controlSignal-gainComputerOut;
             //dBToLin(controlSignal);
             
@@ -266,6 +271,9 @@ bool DrCompSeabergAudioProcessor::isAudioPlaying(){
     return audioPlaying;
 }
 
+bool DrCompSeabergAudioProcessor::isProcessorBypassed(){
+    return processorBypassed;
+}
 
 //Editor interface
 //==============================================================================
