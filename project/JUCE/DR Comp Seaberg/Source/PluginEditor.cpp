@@ -16,10 +16,7 @@
 //==============================================================================
 DrCompSeabergAudioProcessorEditor::DrCompSeabergAudioProcessorEditor (DrCompSeabergAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
-{
-    // Make sure that before the constructor has finished, you've set the
-    // editor's size to whatever you need it to be.
-    
+{    
     setSize (510, 340);
     
     myCompressorDisplay = new CompressorDisplay(p,*this);
@@ -52,11 +49,7 @@ void DrCompSeabergAudioProcessorEditor::paint (Graphics& g)
 
 void DrCompSeabergAudioProcessorEditor::resized()
 {
-    //TODO:Implement this method OR Leave alone for fixed size plugin-parameter
-    //sliders is empty when this method is first called so this code does not get read on first pass
-//    for(int i=0;i < parameterSliders.size();i++){
-//        parameterSliders[i]->setBounds(30+(i*90), 200, 90, 80);
-//    }
+
 }
 
 void DrCompSeabergAudioProcessorEditor::createControl(const AudioProcessorParameterWithID* parameter, int parameterNumber){

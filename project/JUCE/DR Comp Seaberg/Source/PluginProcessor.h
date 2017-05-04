@@ -60,6 +60,7 @@ public:
     
     //==============================================================================
     const float* currentSamples;
+    const float* reductionSamples;
     bool isAudioPlaying();
     bool isProcessorBypassed();
     int samplesInBlock; //refactor
@@ -89,8 +90,10 @@ private:
     bool processorBypassed;
     bool audioPlaying;
     
+    
     const int oversampling = 4;
     AudioSampleBuffer resampledBuffer;
+    AudioSampleBuffer reductionBuffer;
     IIRFilter gainStageFilter;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrCompSeabergAudioProcessor)

@@ -20,7 +20,7 @@
 class WaveformVisualizer    : public AudioVisualiserComponent
 {
 public:
-    WaveformVisualizer(CompressorDisplay&);
+    WaveformVisualizer(CompressorDisplay&, const float**, const int, Colour);
     ~WaveformVisualizer();
 
     void paint (Graphics&) override;
@@ -29,6 +29,9 @@ public:
 private:
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (WaveformVisualizer)
     CompressorDisplay& myDisplay;
+    const float **myDataLocation;
+    const int myNumChannels;
+    Colour myWaveformColor;
     
     void createWaveform();
 };

@@ -140,6 +140,7 @@ void DrCompSeabergAudioProcessor::prepareToPlay (double sampleRate, int samplesP
     gainStageFilter.setCoefficients(IIRCoefficients::makeLowPass(sampleRate*oversampling, 20000));
     gainStageFilter.reset();
     resampledBuffer.setSize (getTotalNumInputChannels(), samplesPerBlock * oversampling);
+    reductionBuffer.setSize(getTotalNumOutputChannels(), samplesPerBlock);
 }
 
 void DrCompSeabergAudioProcessor::releaseResources()
@@ -211,31 +212,32 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         
-        float* writer1 = resampledBuffer.getWritePointer (channel);
+        float* overSampleWriter = resampledBuffer.getWritePointer (channel);
         float* channelData = buffer.getWritePointer (channel);
         
         for (int x=0; x<buffer.getNumSamples(); ++x) // note -1 otherwise you go out of bounds...
         {
-            writer1[x*oversampling] = channelData[x] * inputGainLinear;
-            writer1[x*oversampling+1] = 0;
-            writer1[x*oversampling+2] = 0;
-            writer1[x*oversampling+3] = 0;
+            overSampleWriter[x*oversampling] = channelData[x] * inputGainLinear;
+            overSampleWriter[x*oversampling+1] = 0;
+            overSampleWriter[x*oversampling+2] = 0;
+            overSampleWriter[x*oversampling+3] = 0;
             
         }
         gainStageFilter.processSamples(resampledBuffer.getWritePointer(channel), resampledBuffer.getNumSamples());
         
         for (int i=0; i<resampledBuffer.getNumSamples(); i++){
-            writer1[i] = gainStage(writer1[i]);
+            overSampleWriter[i] = gainStage(overSampleWriter[i]);
         }
         
         for(int x=0; x<buffer.getNumSamples(); ++x){
-            channelData[x] = writer1[x*oversampling];
+            channelData[x] = overSampleWriter[x*oversampling];
         }
         
         
-        
+        float* reductionWriter = reductionBuffer.getWritePointer(channel);
         
         currentSamples = buffer.getReadPointer(channel);
+        reductionSamples = reductionBuffer.getReadPointer(channel);
         for(int sample=0; sample < buffer.getNumSamples(); ++sample){
             currentSample = channelData[sample];
             
@@ -256,12 +258,10 @@ void DrCompSeabergAudioProcessor::processBlock (AudioSampleBuffer& buffer, MidiB
             dBToLin(controlSignal);
             //set sample to equal new sample
             computedSample = currentSample*controlSignal;
+            reductionWriter[sample] = -fabsf(currentSample-computedSample);
             channelData[sample] = computedSample;
             
         }
-        //detect how many channels there are, for each channel of data,
-        //we must process the current buffer individually
-        //currentSamples = *new AudioSampleBuffer(&channelData,totalNumInputChannels,buffer.getNumSamples());
     }
 }
 

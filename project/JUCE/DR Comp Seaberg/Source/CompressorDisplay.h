@@ -33,7 +33,8 @@ public:
 private:
     DrCompSeabergAudioProcessor* myProcessor;
     DrCompSeabergAudioProcessorEditor* myEditor;
-    AudioVisualiserComponent* myWaveformWindow;
+    AudioVisualiserComponent* myResultWaveform;
+    AudioVisualiserComponent* myReducedWaveform;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressorDisplay)
 };

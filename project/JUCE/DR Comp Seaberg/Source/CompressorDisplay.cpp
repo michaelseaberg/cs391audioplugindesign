@@ -18,7 +18,9 @@ CompressorDisplay::CompressorDisplay(DrCompSeabergAudioProcessor& processor, DrC
     setBounds(30, 30, 450, 150);
     myProcessor = &processor;
     myEditor = &editor;
-    myWaveformWindow = new WaveformVisualizer(*this);
+    myResultWaveform = new WaveformVisualizer(*this,&myProcessor->currentSamples,myProcessor->getTotalNumOutputChannels(),Colour(0,0,255));
+    myReducedWaveform = new WaveformVisualizer(*this,&myProcessor->reductionSamples,myProcessor->getTotalNumOutputChannels(),Colour(220,220,220));
+    myReducedWaveform->setBounds(0, -30, 450, 60);
     myEditor->addAndMakeVisible(*this);
 
 }
