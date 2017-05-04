@@ -17,9 +17,9 @@
 DrCompSeabergAudioProcessorEditor::DrCompSeabergAudioProcessorEditor (DrCompSeabergAudioProcessor& p)
 : AudioProcessorEditor (&p), processor (p)
 {    
-    setSize (510, 340);
+    setSize (width, height);
     
-    myCompressorDisplay = new CompressorDisplay(p,*this);
+    myCompressorDisplay = new CompressorDisplay(p,*this,width-10,200,5,5);
     const OwnedArray<AudioProcessorParameter>& params = processor.getParameters();
     
     for (int i = 0; i < params.size(); ++i)
@@ -43,7 +43,7 @@ void DrCompSeabergAudioProcessorEditor::paint (Graphics& g)
     g.fillAll (Colours::white);
     g.setColour (Colours::black);
     g.setFont (18.0f);
-    g.drawFittedText ("Compressor",0,0, getWidth(),30, Justification::centred, 1);
+    g.drawFittedText ("Seacomp",0,0, getWidth(),30, Justification::centred, 1);
     
 }
 
@@ -64,9 +64,23 @@ void DrCompSeabergAudioProcessorEditor::createControl(const AudioProcessorParame
             newButton->setClickingTogglesState(true);
             newButton->setRadioGroupId(1);
             newButton->addListener(this);
-            newButton->setBounds(30+(i*112.5), 281, 112.5, 40);
+            if(i==0){
+                newButton->setConnectedEdges(2);
+                Label* ratioLabel;
+                ratioLabel = new Label(String("ratioLabel"), String("Ratio: "));
+                //ratioLabel->setText(String("Ratio Setting"), dontSendNotification);
+                ratioLabel->setBounds(0, 330, 50, 30);
+                ratioLabel->attachToComponent(newButton, true);
+                addAndMakeVisible(ratioLabel);
+            }
+            else if (i==3)
+                newButton->setConnectedEdges(1);
+            else
+                newButton->setConnectedEdges(3);
+            newButton->setBounds(70+(i*112.5), 331, 112.5, 40);
             addAndMakeVisible(newButton);
         }
+        
         
     }
     else{
@@ -77,12 +91,22 @@ void DrCompSeabergAudioProcessorEditor::createControl(const AudioProcessorParame
         newSlider->setSliderStyle(Slider::RotaryHorizontalVerticalDrag);
         newSlider->setRange (floatParam->range.start, floatParam->range.end,1);
         //TODO: Create new Slider Label that gives Parameter: Value Unit
-        newSlider->setTextBoxStyle(Slider::TextBoxBelow, true, 90,25);
-        newSlider->setTextValueSuffix(" :"+ floatParam->name);
+        newSlider->setTextBoxStyle(Slider::NoTextBox, true, 100,0);
+        
+
+        //newSlider->setTextValueSuffix(" :"+ floatParam->name);
+        newSlider->setPopupDisplayEnabled (true, this);
         newSlider->setValue (*floatParam);
         newSlider->addListener (this);
-        newSlider->setBounds(30+(parameterNumber*90), 200, 90, 80);
+        newSlider->setBounds(30+(parameterNumber*100), 220, 100, 80);
         addAndMakeVisible (newSlider);
+        
+        Label* sliderLabel;
+        sliderLabel = new Label(floatParam->paramID, floatParam->name);
+        sliderLabel->setBounds(30+(parameterNumber*100), 301, 100, 29);
+        sliderLabel->setJustificationType(Justification::centred);
+        addAndMakeVisible(sliderLabel);
+        
     }
     
 }

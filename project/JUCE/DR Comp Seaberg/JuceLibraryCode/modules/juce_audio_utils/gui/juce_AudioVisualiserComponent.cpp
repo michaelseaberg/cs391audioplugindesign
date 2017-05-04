@@ -177,7 +177,7 @@ void AudioVisualiserComponent::paint (Graphics& g)
     Rectangle<float> r (getLocalBounds().toFloat());
     const float channelHeight = r.getHeight() / channels.size();
 
-    g.setColour (waveformColour);
+    //g.setColour (waveformColour);
 
     for (int i = 0; i < channels.size(); ++i)
     {

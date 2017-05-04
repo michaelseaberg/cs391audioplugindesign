@@ -20,7 +20,7 @@
 class WaveformVisualizer    : public AudioVisualiserComponent
 {
 public:
-    WaveformVisualizer(CompressorDisplay&, const float**, const int, Colour);
+    WaveformVisualizer(CompressorDisplay&, const float**, const int, Colour, Colour, int, int);
     ~WaveformVisualizer();
 
     void paint (Graphics&) override;
@@ -31,7 +31,11 @@ private:
     CompressorDisplay& myDisplay;
     const float **myDataLocation;
     const int myNumChannels;
-    Colour myWaveformColor;
+    Colour myStartColor;
+    Colour myEndColor;
+    int width;
+    int height;
+    const int refreshRate = 30; //Hz
     
     void createWaveform();
 };

@@ -47,6 +47,8 @@ private:
     Component* myCompressorDisplay;
     OwnedArray<Slider> parameterSliders;
     OwnedArray<Button> ratioButtons;
+    const int width = 560;
+    const int height = 390;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (DrCompSeabergAudioProcessorEditor)
 };

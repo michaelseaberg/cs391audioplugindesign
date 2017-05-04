@@ -23,7 +23,7 @@
 class CompressorDisplay    : public Component
 {
 public:
-    CompressorDisplay(DrCompSeabergAudioProcessor&, DrCompSeabergAudioProcessorEditor&);
+    CompressorDisplay(DrCompSeabergAudioProcessor&, DrCompSeabergAudioProcessorEditor&, int, int ,int,int);
     ~CompressorDisplay();
 
     void paint (Graphics&) override;
@@ -35,6 +35,10 @@ private:
     DrCompSeabergAudioProcessorEditor* myEditor;
     AudioVisualiserComponent* myResultWaveform;
     AudioVisualiserComponent* myReducedWaveform;
+    int width;
+    int height;
+    int xpos;
+    int ypos;
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (CompressorDisplay)
 };

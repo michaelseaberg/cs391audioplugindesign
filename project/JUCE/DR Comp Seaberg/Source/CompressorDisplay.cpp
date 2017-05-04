@@ -13,14 +13,14 @@
 
 
 //==============================================================================
-CompressorDisplay::CompressorDisplay(DrCompSeabergAudioProcessor& processor, DrCompSeabergAudioProcessorEditor& editor) : Component()
+CompressorDisplay::CompressorDisplay(DrCompSeabergAudioProcessor& processor, DrCompSeabergAudioProcessorEditor& editor, int w, int h, int x, int y) : Component(), width(w), height(h), xpos(x), ypos(y)
 {
-    setBounds(30, 30, 450, 150);
+    setBounds(xpos, ypos, width, height);
     myProcessor = &processor;
     myEditor = &editor;
-    myResultWaveform = new WaveformVisualizer(*this,&myProcessor->currentSamples,myProcessor->getTotalNumOutputChannels(),Colour(0,0,255));
-    myReducedWaveform = new WaveformVisualizer(*this,&myProcessor->reductionSamples,myProcessor->getTotalNumOutputChannels(),Colour(220,220,220));
-    myReducedWaveform->setBounds(0, -30, 450, 60);
+    myResultWaveform = new WaveformVisualizer(*this,&myProcessor->currentSamples,myProcessor->getTotalNumOutputChannels(),Colour(0,0,255),Colour(180,180,255),width,height);
+    myReducedWaveform = new WaveformVisualizer(*this,&myProcessor->reductionSamples,myProcessor->getTotalNumOutputChannels(),Colour(180,180,255),Colour(255,255,255),width,height);
+    myReducedWaveform->setBounds(0, -50, width, 100);
     myEditor->addAndMakeVisible(*this);
 
 }
@@ -36,8 +36,6 @@ void CompressorDisplay::paint (Graphics& g)
 
 void CompressorDisplay::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
 
 }
 
